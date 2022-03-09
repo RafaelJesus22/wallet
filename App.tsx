@@ -1,8 +1,9 @@
 import { AppProvider } from './src/Contexts/AppContext';
-import Home from './src/Pages/Home';
+import { Home } from './src/Pages/Home';
 
 import AppLoading from 'expo-app-loading';
 import { useFonts, Rubik_400Regular, Rubik_500Medium, Rubik_600SemiBold, Rubik_700Bold } from '@expo-google-fonts/rubik';
+import { Router } from './src/routes/Routes';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -17,8 +18,6 @@ export default function App() {
   }
 
   return (
-    <AppProvider>
-      <Home />
-    </AppProvider>
+    <Router />
   );
 }
