@@ -7,7 +7,9 @@ export const fontFamily = {
 
 export const Colors = {
   primary: '#8c22d0',
+  primaryLight: '#8c22d077',
   backGround: '#fff',
   text: '#000',
-  secondatyText: '#3d3d3d',
+  secondatyText: '#828282',
+  placeholder: '#d1d1d1',
 }
