@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: 22,
-    fontFamily: fontFamily.medium,
+    fontFamily: fontFamily.semiBold,
     color: '#fff',
   },
 });
