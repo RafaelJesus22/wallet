@@ -88,7 +88,7 @@ export const NewPocket = () => {
           title="Criar Carteira"
           onPress={handleAddPocket}
           loading={loading}
-          disabled={loading}
+          disabled={loading || !name || goal === '0'}
         />
       </View>
     </ScrollView>

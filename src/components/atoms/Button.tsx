@@ -22,7 +22,11 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
 }) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress} disabled={disabled} activeOpacity={0.7}>
+    <TouchableOpacity
+    style={[styles.button, disabled && styles.disabled]}
+    onPress={onPress}
+    disabled={disabled}
+    activeOpacity={0.7}>
       {loading ? (
         <ActivityIndicator size={'small'} color={Colors.backGround} />
       ) : (
@@ -45,6 +49,9 @@ const styles = StyleSheet.create({
     color: Colors.backGround,
     fontFamily: fontFamily.primary,
     fontSize: 18,
+  },
+  disabled: {
+    backgroundColor: Colors.primaryLight,
   }
 });
 
