@@ -4,6 +4,7 @@ import { TextInputMask } from 'react-native-masked-text'
 import { Entypo } from '@expo/vector-icons';
 import { Colors, fontFamily } from '../config/styles';
 import { useNavigation } from '@react-navigation/native';
+import uuid from 'react-native-uuid';
 import { Button } from '../components/atoms/Button';
 import { useAppContext } from '../Contexts/AppContext';
 import { PocketProps } from '../types';
@@ -31,6 +32,7 @@ export const NewPocket = () => {
       .replace('R$', '');
 
     const pocket: PocketProps = {
+      id: uuid.v4().toString(),
       name,
       value: Number(formattedValue),
       goal: Number(formattedGoal),
