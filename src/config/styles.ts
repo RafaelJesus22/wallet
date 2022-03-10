@@ -1,8 +1,8 @@
 export const fontFamily = {
-  primary: 'Rubik_400Regular',
-  medium: 'Rubik_500Medium',
-  semiBold: 'Rubik_600SemiBold',
-  bold: 'Rubik_700Bold',
+  primary: 'Poppins_400Regular',
+  medium: 'Poppins_500Medium',
+  semiBold: 'Poppins_600SemiBold',
+  bold: 'Poppins_700Bold',
 };
 
 export const Colors = {
