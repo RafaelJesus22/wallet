@@ -5,7 +5,10 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import { StorageKey } from '../enums/StorageKey';
+import { getShowUserInfo, toggleShowUserInfo } from '../services/user';
 import {PocketProps} from '../types';
+import { getItem } from '../utils';
 
 interface AppContextData {
   total: number;
@@ -28,8 +31,21 @@ export const AppProvider: React.FC = ({children}) => {
   const [selectedPocket, setSelectedPocket] = useState<PocketProps>();
   const [isShowingUserInfo, setIsShowingUserInfo] = useState(false);
 
+  useEffect(() => {
+    const getStorageData = async () => {
+      const storagedIsShowingUserInfo = await getShowUserInfo();
+      setIsShowingUserInfo(storagedIsShowingUserInfo);
+    };
+    getStorageData();
+  }, [])
+
   async function updateIsShowingUserInfo() {
-    setIsShowingUserInfo(!isShowingUserInfo);
+    const res = await toggleShowUserInfo(!isShowingUserInfo);
+
+    if (res) {
+      const storagedIsShowingUserInfo = await getShowUserInfo();
+      setIsShowingUserInfo(storagedIsShowingUserInfo);
+    }
   }
 
   const handleUpdateTotal = useCallback(async () => {
