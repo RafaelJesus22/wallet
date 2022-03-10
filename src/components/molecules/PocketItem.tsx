@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { PocketAmount } from '../atoms/PocketAmount';
 import { PocketTitle } from '../atoms/PocketTitle';
+import { PocketGoal } from '../atoms/PocketGoal';
 import { PocketProps } from '../../types';
 
 
@@ -16,8 +17,8 @@ export const PocketItem: React.FC<PocketProps> = ({
         <PocketTitle>{name}</PocketTitle>
         <PocketAmount>
           R$ {Number(value).toFixed(2).replace('.', ',')}
-          {goal && (<Text>/{goal}</Text>)}
         </PocketAmount>
+        {goal && <PocketGoal goal={goal} />}
       </View>
     </View>
   );
