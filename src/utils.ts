@@ -26,3 +26,11 @@ export function removeDots(text: string) {
 export function delay(s: number) {
   return new Promise(resolve => setTimeout(resolve, s * 1000));
 }
+
+export function currencyFormat(value?: number) {
+  if (!value) {
+    return 'R$ 0,00';
+  }
+
+  return value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+}
