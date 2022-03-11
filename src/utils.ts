@@ -4,7 +4,7 @@ import { StorageKey } from './enums/StorageKey';
 export async function getItem(storageKey: StorageKey) {
   try {
     const value = await AsyncStorage.getItem(storageKey);
-    return {success: true, data: JSON.parse(value || '{}')};
+    return {success: true, data: JSON.parse(value || '[]')};
   } catch (error) {
     return {success: false, error};
   }
