@@ -2,4 +2,5 @@ export enum Screens {
   HOME = 'HOME',
   NEW_POCKET = 'NEW_POCKET',
   POCKET_DETAILS = 'POCKET_DETAILS',
+  POCKET_EDIT = 'POCKET_EDIT',
 }
