@@ -1,13 +1,27 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
+import { Colors } from '../../config/styles';
 import { useAppContext } from '../../Contexts/AppContext';
 import { PocketAmount } from '../atoms/PocketAmount';
 import { PocketTitle } from '../atoms/PocketTitle';
 import { Actions } from '../atoms/Actions';
+import { ActionItemProps } from '../atoms/ActionItem';
+import { Screens } from '../../enums/Screens';
 
 export const MainPocket: React.FC = () => {
   const { total } = useAppContext();
+  const navigation = useNavigation();
+
+  const ACTIONS: ActionItemProps[] = [
+    {
+      name: 'Adicionar\nbolso',
+      img: <Feather name="plus-circle" size={36} color={Colors.text} />,
+      onPress: () => navigation.navigate(Screens.NEW_POCKET),
+    }
+  ];
 
   return (
     <View style={styles.container}>
@@ -15,7 +29,7 @@ export const MainPocket: React.FC = () => {
         <PocketTitle>Total guardado</PocketTitle>
         <PocketAmount>R$ {Number(total).toFixed(2).replace('.', ',')}</PocketAmount>
       </View>
-      <Actions />
+      <Actions actions={ACTIONS} />
     </View>
   );
 }

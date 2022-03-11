@@ -2,13 +2,13 @@ import React from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import { Colors, fontFamily } from '../../config/styles';
 
-interface Props {
+export interface ActionItemProps {
   name: string;
   img?: React.ReactNode;
   onPress: () => void;
 }
 
-export const ActionItem: React.FC<Props> = ({name, img, onPress}) => {
+export const ActionItem: React.FC<ActionItemProps> = ({name, img, onPress}) => {
   return (
     <TouchableOpacity
       onPress={onPress}

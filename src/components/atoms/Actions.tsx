@@ -4,30 +4,22 @@ import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 import { Colors } from '../../config/styles';
-import { ActionItem } from './ActionItem';
+import { ActionItem, ActionItemProps } from './ActionItem';
 import { Screens } from '../../enums/Screens';
 
-const ACTIONS = [
-  {
-    name: 'Adicionar\nbolso',
-    img: <Feather name="plus-circle" size={36} color={Colors.text} />,
-    route: Screens.NEW_POCKET,
-  }
-]
+interface Props {
+  actions: ActionItemProps[];
+}
 
-export const Actions: React.FC = () => {
-  const navigation = useNavigation();
-
-  function handlePress(route: Screens) {
-    navigation.navigate(route);
-  }
+export const Actions: React.FC<Props> = ({
+  actions,
+}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.actions} horizontal showsHorizontalScrollIndicator={false}>
-      {ACTIONS.map((action, index) => (
+      {!!actions && actions.map((action, index) => (
         <ActionItem
           key={index}
-          onPress={() => handlePress(action.route)}
           {...action}
         />
       ))}
