@@ -5,10 +5,9 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { StorageKey } from '../enums/StorageKey';
+import { PocketService } from '../services/pockets';
 import { getShowUserInfo, toggleShowUserInfo } from '../services/user';
 import {PocketProps} from '../types';
-import { getItem } from '../utils';
 
 interface AppContextData {
   total: number;
@@ -16,7 +15,6 @@ interface AppContextData {
   selectedPocket?: PocketProps;
   isShowingUserInfo: boolean;
   updateIsShowingUserInfo(): Promise<void>;
-  updateTotal(value: number): Promise<void>;
   updatePocket(pocket: PocketProps): Promise<void>;
   updateSelectedPocket(pocket: PocketProps): void;
   addPocket(pocket: PocketProps): Promise<void>;
@@ -30,11 +28,27 @@ export const AppProvider: React.FC = ({children}) => {
   const [pockets, setPockets] = useState<PocketProps[]>([]);
   const [selectedPocket, setSelectedPocket] = useState<PocketProps>();
   const [isShowingUserInfo, setIsShowingUserInfo] = useState(false);
+  const pocketService = new PocketService();
+
+  const getStoragedIsShowingUserInfo = useCallback(async () => {
+    const isShowingUserInfo = await getShowUserInfo();
+    setIsShowingUserInfo(isShowingUserInfo);
+  }, []);
+
+  const getStoragedPockets = useCallback(async () => {
+    const { success, data } = await pocketService.getPockets();
+
+    if (success && data) {
+      return setPockets(data);
+    }
+
+    return setPockets([]);
+  }, []);
 
   useEffect(() => {
     const getStorageData = async () => {
-      const storagedIsShowingUserInfo = await getShowUserInfo();
-      setIsShowingUserInfo(storagedIsShowingUserInfo);
+      await getStoragedIsShowingUserInfo();
+      await getStoragedPockets();
     };
     getStorageData();
   }, [])
@@ -43,8 +57,7 @@ export const AppProvider: React.FC = ({children}) => {
     const res = await toggleShowUserInfo(!isShowingUserInfo);
 
     if (res) {
-      const storagedIsShowingUserInfo = await getShowUserInfo();
-      setIsShowingUserInfo(storagedIsShowingUserInfo);
+      await getStoragedIsShowingUserInfo();
     }
   }
 
@@ -52,33 +65,42 @@ export const AppProvider: React.FC = ({children}) => {
     setTotal(pockets.reduce((acc, curr) => acc + curr.value, 0));
   }, [pockets]);
 
-  async function updateTotal(value: number) {
-    setTotal(value);
-  }
-
   async function updatePocket(pocket: PocketProps) {
-    const index = pockets.findIndex(p => p.name === pocket.name);
-    const newPockets = [...pockets];
-    newPockets[index] = pocket;
-    setPockets(newPockets);
+    const updatedPocket = await pocketService.updatePocket(pocket);
+
+    if (updatedPocket.success) {
+      return await getStoragedPockets();
+    }
+
+    if (updatedPocket.error) {
+      return;
+    }
   }
 
   async function addPocket(pocket: PocketProps) {
-    setPockets([...pockets, pocket]);
+    const { success, data, error } = await pocketService.addNewPocket(pocket);
+
+    if (success && data) {
+      await getStoragedPockets();
+    }
+
+    if (error) {
+      return;
+    }
   }
 
   async function deletePocket(pocket: PocketProps) {
-    const index = pockets.findIndex(p => p.name === pocket.name);
-    const newPockets = [...pockets];
-    newPockets.splice(index, 1);
-    setPockets(newPockets);
+    const { success } = await pocketService.deletePocket(pocket);
+
+    if (success) {
+      await getStoragedPockets();
+    }
   }
 
   function updateSelectedPocket(pocket: PocketProps) {
     setSelectedPocket(pocket);
   }
 
-  
   useEffect(() => {
     (async () => await handleUpdateTotal())();
   }, [handleUpdateTotal, pockets]);
@@ -91,7 +113,6 @@ export const AppProvider: React.FC = ({children}) => {
         selectedPocket,
         isShowingUserInfo,
         updateIsShowingUserInfo,
-        updateTotal,
         addPocket,
         updatePocket,
         deletePocket,
@@ -109,7 +130,6 @@ export const useAppContext = () => {
     selectedPocket,
     isShowingUserInfo,
     updateIsShowingUserInfo,
-    updateTotal,
     addPocket,
     updatePocket,
     deletePocket,
@@ -122,7 +142,6 @@ export const useAppContext = () => {
     selectedPocket,
     isShowingUserInfo,
     updateIsShowingUserInfo,
-    updateTotal,
     addPocket,
     updatePocket,
     deletePocket,

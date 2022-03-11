@@ -2,53 +2,87 @@ import { StorageKey } from "../enums/StorageKey";
 import { PocketProps } from "../types";
 import { getItem, setItem } from "../utils";
 
-export async function getStoragedPockets() {
-  const res =  await getItem(StorageKey.POCKETS);
+export interface GetPocketsResponse {
+  success: boolean;
+  data: PocketProps[],
+  error: any,
+} 
+
+export class PocketService {
+  async getPockets(): Promise<GetPocketsResponse> {
+    const res = await getItem(StorageKey.POCKETS);
   
-  if (res.success) {
-    return res.data;
+    if (res.success) {
+      return {
+        success: true,
+        data: res.data,
+        error: null,
+      };
+    }
+  
+    return {
+      success: false,
+      data: [],
+      error: res.error,
+    };
   }
 
-  return res.error;
-}
-
-export async function addNewPocket(pocket: PocketProps) {
-  const storagedPockets = await getStoragedPockets();
-
-  if (storagedPockets.error) {
+  async addNewPocket(pocket: PocketProps) {
+    const storagedPockets = await this.getPockets();
+  
+    if (storagedPockets.error) {
+      return {success: false, error: 'Houve um erro ao adicionar sua carteira'};
+    }
+  
+    const newPockets = [...storagedPockets.data, pocket];
+    const addedPocket = await setItem(StorageKey.POCKETS, newPockets);
+  
+    if (addedPocket.success) {
+      return {success: true, data: newPockets};
+    }
+  
     return {success: false, error: 'Houve um erro ao adicionar sua carteira'};
   }
 
-  const newPockets = [...storagedPockets, pocket];
-  const addedPocket = await setItem(StorageKey.POCKETS, newPockets);
-
-  if (addedPocket.success) {
-    return {success: true, data: newPockets};
-  }
-
-  return {success: false, error: 'Houve um erro ao adicionar sua carteira'};
-}
-
-export async function updatePocket(pocket: PocketProps) {
-  const storagedPockets = await getStoragedPockets();
-
-  if (storagedPockets.error) {
+  async updatePocket(pocket: PocketProps) {
+    const storagedPockets = await this.getPockets();
+  
+    if (storagedPockets.error) {
+      return {success: false, error: 'Houve um erro ao atualizar sua carteira'};
+    }
+  
+    const updatedPockets = storagedPockets?.data?.map((p: PocketProps) => {
+      if (p.id === pocket.id) {
+        return pocket;
+      }
+  
+      return p;
+    });
+  
+    const updatedPocket = await setItem(StorageKey.POCKETS, updatedPockets);
+  
+    if (updatedPocket.success) {
+      return {success: true, data: updatedPockets};
+    }
+  
     return {success: false, error: 'Houve um erro ao atualizar sua carteira'};
   }
 
-  const updatedPockets = storagedPockets.map((p: PocketProps) => {
-    if (p.id === pocket.id) {
-      return pocket;
+  async deletePocket(pocket: PocketProps) {
+    const storagedPockets = await this.getPockets();
+  
+    if (storagedPockets.error) {
+      return {success: false, error: 'Houve um erro ao deletar sua carteira'};
     }
-
-    return p;
-  });
-
-  const updatedPocket = await setItem(StorageKey.POCKETS, updatedPockets);
-
-  if (updatedPocket.success) {
-    return {success: true, data: updatedPockets};
+  
+    const remainingPockets = storagedPockets?.data?.filter((p: PocketProps) => p.id !== pocket.id);
+  
+    const deletedPocket = await setItem(StorageKey.POCKETS, remainingPockets);
+  
+    if (deletedPocket.success) {
+      return {success: true, data: remainingPockets};
+    }
+  
+    return {success: false, error: 'Houve um erro ao deletar sua carteira'};
   }
-
-  return {success: false, error: 'Houve um erro ao atualizar sua carteira'};
 }
