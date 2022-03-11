@@ -16,12 +16,12 @@ export const PocketItem: React.FC<PocketItemProps> = ({  pocket }) => {
   const { updateSelectedPocket } = useAppContext();
   const navigation = useNavigation();
 
-  const handlePress = useCallback(() => {
+  const handlePress = () => {
     updateSelectedPocket(pocket);
     navigation.navigate(Screens.POCKET_DETAILS, {
       pocket,
     });
-  }, []);
+  };
 
   return (
     <TouchableOpacity onPress={handlePress} style={styles.container} activeOpacity={0.9}>

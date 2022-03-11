@@ -8,20 +8,32 @@ import { Colors, fontFamily } from '../config/styles';
 import { currencyFormat } from '../utils';
 import { ActionItemProps } from '../components/atoms/ActionItem';
 import { Actions } from '../components/atoms/Actions';
+import { Screens } from '../enums/Screens';
 
 export const PocketDetails = () => {
-  const { selectedPocket } = useAppContext();
+  const { selectedPocket, deletePocket } = useAppContext();
   const navigation = useNavigation();
 
   const handlePressBack = useCallback(() => {
     navigation.goBack();
   }, []);
 
-  const handlePressSaveMoney = useCallback(() => {}, []);
+  const handlePressSaveMoney = useCallback(() => {
+    navigation.navigate(Screens.POCKET_EDIT, {
+      actionType: 'save',
+    })
+  }, []);
 
-  const handlePressRedeemMoney = useCallback(() => {}, []);
+  const handlePressRedeemMoney = useCallback(() => {
+    navigation.navigate(Screens.POCKET_EDIT, {
+      actionType: 'redeem',
+    })
+  }, []);
 
-  const handlePressDelete = useCallback(() => {}, []);
+  const handlePressDelete = async () => {
+    selectedPocket && await deletePocket(selectedPocket);
+    navigation.goBack();
+  };
 
   const ACTIONS: ActionItemProps[] = [
     {
@@ -50,9 +62,7 @@ export const PocketDetails = () => {
           <Text style={styles.label}>Total guardado</Text>
           <Text style={styles.pocketValue}>{currencyFormat(selectedPocket?.value)}</Text>
         </View>
-
         <Actions actions={ACTIONS} />
-
       </View>
       {/* <PocketHistory /> */}
     </View>

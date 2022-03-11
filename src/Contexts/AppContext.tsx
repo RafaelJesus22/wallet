@@ -14,6 +14,8 @@ interface AppContextData {
   pockets: PocketProps[];
   selectedPocket?: PocketProps;
   isShowingUserInfo: boolean;
+  loading: boolean;
+  updateLoading: () => void;
   updateIsShowingUserInfo(): Promise<void>;
   updatePocket(pocket: PocketProps): Promise<void>;
   updateSelectedPocket(pocket: PocketProps): void;
@@ -24,9 +26,10 @@ interface AppContextData {
 const AppContext = createContext<AppContextData>({} as AppContextData);
 
 export const AppProvider: React.FC = ({children}) => {
-  const [total, setTotal] = useState(100.98);
+  const [total, setTotal] = useState(0);
+  const [loading, setloading] = useState(false);
   const [pockets, setPockets] = useState<PocketProps[]>([]);
-  const [selectedPocket, setSelectedPocket] = useState<PocketProps>();
+  const [selectedPocket, setSelectedPocket] = useState<PocketProps>({} as PocketProps);
   const [isShowingUserInfo, setIsShowingUserInfo] = useState(false);
   const pocketService = new PocketService();
 
@@ -35,7 +38,7 @@ export const AppProvider: React.FC = ({children}) => {
     setIsShowingUserInfo(isShowingUserInfo);
   }, []);
 
-  const getStoragedPockets = useCallback(async () => {
+  const getStoragedPockets = async () => {
     const { success, data } = await pocketService.getPockets();
 
     if (success && data) {
@@ -43,7 +46,7 @@ export const AppProvider: React.FC = ({children}) => {
     }
 
     return setPockets([]);
-  }, []);
+  };
 
   useEffect(() => {
     const getStorageData = async () => {
@@ -61,19 +64,29 @@ export const AppProvider: React.FC = ({children}) => {
     }
   }
 
-  const handleUpdateTotal = useCallback(async () => {
+  const updateLoading = () => {
+    setloading(!loading);
+  };
+
+  const handleUpdateTotal = async () => {
     setTotal(pockets.reduce((acc, curr) => acc + curr.value, 0));
-  }, [pockets]);
+  };
 
   async function updatePocket(pocket: PocketProps) {
     const updatedPocket = await pocketService.updatePocket(pocket);
 
     if (updatedPocket.success) {
-      return await getStoragedPockets();
+      await getStoragedPockets();
+
+      const updatedPocket = pockets.find(p => p.id === pocket.id);
+
+      if (updatedPocket) {
+        return setSelectedPocket(updatedPocket);
+      }
     }
 
     if (updatedPocket.error) {
-      return;
+      return console.log('Erro ao atualizar a carteira');
     }
   }
 
@@ -98,6 +111,7 @@ export const AppProvider: React.FC = ({children}) => {
   }
 
   function updateSelectedPocket(pocket: PocketProps) {
+    console.log('recebi', pocket);
     setSelectedPocket(pocket);
   }
 
@@ -112,6 +126,8 @@ export const AppProvider: React.FC = ({children}) => {
         pockets,
         selectedPocket,
         isShowingUserInfo,
+        loading,
+        updateLoading,
         updateIsShowingUserInfo,
         addPocket,
         updatePocket,
