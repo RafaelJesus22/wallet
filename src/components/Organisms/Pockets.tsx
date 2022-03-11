@@ -8,8 +8,8 @@ export const Pockets = () => {
 
   return (
     <View>
-      {pockets && pockets.map((pocket, index) => (
-        <PocketItem {...pocket} key={index} />
+      {pockets && pockets.map((pocket) => (
+        <PocketItem pocket={pocket} key={pocket.id} />
       ))}
     </View>
   );
