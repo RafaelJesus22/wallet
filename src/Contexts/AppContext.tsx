@@ -6,8 +6,9 @@ import React, {
   useState,
 } from 'react';
 import { PocketService } from '../services/pockets';
+import { HistoryService } from '../services/History';
 import { getShowUserInfo, toggleShowUserInfo } from '../services/user';
-import {PocketProps} from '../types';
+import {HistoryItemProps, PocketProps} from '../types';
 
 interface AppContextData {
   total: number;
@@ -21,6 +22,7 @@ interface AppContextData {
   updateSelectedPocket(pocket: PocketProps): void;
   addPocket(pocket: PocketProps): Promise<void>;
   deletePocket(pocket: PocketProps): Promise<void>;
+  getPocketHistory(): Promise<HistoryItemProps[]>;
 }
 
 const AppContext = createContext<AppContextData>({} as AppContextData);
@@ -32,6 +34,7 @@ export const AppProvider: React.FC = ({children}) => {
   const [selectedPocket, setSelectedPocket] = useState<PocketProps>({} as PocketProps);
   const [isShowingUserInfo, setIsShowingUserInfo] = useState(false);
   const pocketService = new PocketService();
+  const historyService = new HistoryService();
 
   const getStoragedIsShowingUserInfo = useCallback(async () => {
     const isShowingUserInfo = await getShowUserInfo();
@@ -115,6 +118,12 @@ export const AppProvider: React.FC = ({children}) => {
     setSelectedPocket(pocket);
   }
 
+  async function getPocketHistory() {
+    const pocketHistory = await historyService.getPockethistory(selectedPocket.id);
+
+    return pocketHistory;
+  }
+
   useEffect(() => {
     (async () => await handleUpdateTotal())();
   }, [handleUpdateTotal, pockets]);
@@ -133,6 +142,7 @@ export const AppProvider: React.FC = ({children}) => {
         updatePocket,
         deletePocket,
         updateSelectedPocket,
+        getPocketHistory,
       }}>
       {children}
     </AppContext.Provider>
@@ -150,6 +160,7 @@ export const useAppContext = () => {
     updatePocket,
     deletePocket,
     updateSelectedPocket,
+    getPocketHistory,
   } = useContext(AppContext);
 
   return {
@@ -162,5 +173,6 @@ export const useAppContext = () => {
     updatePocket,
     deletePocket,
     updateSelectedPocket,
+    getPocketHistory,
   };
 };
