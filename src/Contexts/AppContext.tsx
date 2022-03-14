@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { PocketService } from '../services/pockets';
 import { HistoryService } from '../services/History';
-import { getShowUserInfo, toggleShowUserInfo } from '../services/user';
+import { UserService } from '../services/user';
 import {HistoryItemProps, PocketProps} from '../types';
 
 interface AppContextData {
@@ -33,11 +33,12 @@ export const AppProvider: React.FC = ({children}) => {
   const [pockets, setPockets] = useState<PocketProps[]>([]);
   const [selectedPocket, setSelectedPocket] = useState<PocketProps>({} as PocketProps);
   const [isShowingUserInfo, setIsShowingUserInfo] = useState(false);
+  const userService = new UserService();
   const pocketService = new PocketService();
   const historyService = new HistoryService();
 
   const getStoragedIsShowingUserInfo = useCallback(async () => {
-    const isShowingUserInfo = await getShowUserInfo();
+    const isShowingUserInfo = await userService.getShowUserInfo();
     setIsShowingUserInfo(isShowingUserInfo);
   }, []);
 
@@ -60,7 +61,7 @@ export const AppProvider: React.FC = ({children}) => {
   }, [])
 
   async function updateIsShowingUserInfo() {
-    const res = await toggleShowUserInfo(!isShowingUserInfo);
+    const res = await userService.toggleShowUserInfo(!isShowingUserInfo);
 
     if (res) {
       await getStoragedIsShowingUserInfo();
