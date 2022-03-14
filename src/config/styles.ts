@@ -12,4 +12,8 @@ export const Colors = {
   text: '#000',
   secondatyText: '#828282',
   placeholder: '#d1d1d1',
+  success: '#39823E',
+  successLight: '#39823E44',
+  danger: '#EB033B',
+  dangerLight: '#EB033B44',
 }

@@ -9,6 +9,7 @@ import { currencyFormat } from '../utils';
 import { ActionItemProps } from '../components/atoms/ActionItem';
 import { Actions } from '../components/atoms/Actions';
 import { Screens } from '../enums/Screens';
+import { PocketHistory } from '../components/molecules/PocketHistory';
 
 export const PocketDetails = () => {
   const { selectedPocket, deletePocket } = useAppContext();
@@ -38,7 +39,7 @@ export const PocketDetails = () => {
   const ACTIONS: ActionItemProps[] = [
     {
       name: 'Guardar\nDinheiro',
-      img: <Feather name="trending-up" size={36} color={'#39823E'} />,
+      img: <Feather name="trending-up" size={36} color={Colors.success} />,
       onPress: handlePressSaveMoney,
     },
     {
@@ -48,7 +49,7 @@ export const PocketDetails = () => {
     },
     {
       name: 'Apagar\nCarteira',
-      img: <AntDesign name="delete" size={24} color={'#EB033B'} />,
+      img: <AntDesign name="delete" size={24} color={Colors.danger} />,
       onPress: handlePressDelete,
     },
   ];
@@ -64,7 +65,7 @@ export const PocketDetails = () => {
         </View>
         <Actions actions={ACTIONS} />
       </View>
-      {/* <PocketHistory /> */}
+      <PocketHistory />
     </View>
   );
 };
