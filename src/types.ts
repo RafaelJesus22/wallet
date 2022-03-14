@@ -1,4 +1,4 @@
-type TransactionType = 'save' | 'redeem'
+type TransactionType = 'save' | 'redeem' | 'creation';
 
 export interface HistoryItemProps {
   id: string;
