@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Colors, fontFamily } from '../../config/styles';
+import { useAppContext } from '../../Contexts/AppContext';
+import { HistoryItemProps } from '../../types';
+import { HistoryItem } from '../atoms/HistoryItem';
 
 export const PocketHistory = () => {
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState<HistoryItemProps[]>([]);
+  const { getPocketHistory } = useAppContext();
 
   async function getHistory() {
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    const history = await getPocketHistory();
+    setHistory(history);
     setLoading(false);
   }
 
@@ -25,6 +31,10 @@ export const PocketHistory = () => {
             color={Colors.primary}
           />
         )}
+
+        {history && history.map(h => (
+          <HistoryItem {...h} key={h.id} />
+        ))}
       </View>
     </View>
   );
@@ -32,10 +42,10 @@ export const PocketHistory = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
     paddingTop: 24,
   },
   title: {
+    paddingHorizontal: 16,
     fontSize: 20,
     fontFamily: fontFamily.medium,
     color: Colors.text
