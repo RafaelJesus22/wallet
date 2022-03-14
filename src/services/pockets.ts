@@ -1,6 +1,9 @@
+import uuid from 'react-native-uuid';
+
 import { StorageKey } from "../enums/StorageKey";
-import { PocketProps } from "../types";
+import { HistoryItemProps, PocketProps } from "../types";
 import { getItem, setItem } from "../utils";
+import { HistoryService } from "./History";
 
 export interface GetPocketsResponse {
   success: boolean;
@@ -9,6 +12,8 @@ export interface GetPocketsResponse {
 } 
 
 export class PocketService {
+  private historyService = new HistoryService();
+
   async getPockets(): Promise<GetPocketsResponse> {
     const res = await getItem(StorageKey.POCKETS);
   
@@ -29,6 +34,7 @@ export class PocketService {
 
   async addNewPocket(pocket: PocketProps) {
     const storagedPockets = await this.getPockets();
+
   
     if (storagedPockets.error) {
       return {success: false, error: 'Houve um erro ao adicionar sua carteira'};
@@ -38,7 +44,18 @@ export class PocketService {
     const addedPocket = await setItem(StorageKey.POCKETS, newPockets);
   
     if (addedPocket.success) {
-      return {success: true, data: newPockets};
+      const historyItemToAdd: HistoryItemProps = {
+        id: uuid.v4().toString(),
+        pocketId: pocket.id,
+        date: new Date(),
+        value: pocket.value,
+        type: 'creation',
+      };
+
+      const addedToHistory = await this.historyService.addPocketHistory(historyItemToAdd);
+
+      console.log({success: true, data: newPockets, addedToHistory});
+      return {success: true, data: newPockets, addedToHistory};
     }
   
     return {success: false, error: 'Houve um erro ao adicionar sua carteira'};
