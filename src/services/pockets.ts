@@ -53,7 +53,6 @@ export class PocketService {
 
       const addedToHistory = await this.historyService.addToHistory(historyItemToAdd);
 
-      console.log({success: true, data: newPockets, addedToHistory});
       return {success: true, data: newPockets, addedToHistory};
     }
   

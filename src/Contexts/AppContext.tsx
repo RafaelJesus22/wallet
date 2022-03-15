@@ -98,10 +98,6 @@ export const AppProvider: React.FC = ({children}) => {
         return setSelectedPocket(updatedPocket);
       }
     }
-
-    if (updatedPocket.error) {
-      return console.log('Erro ao atualizar a carteira');
-    }
   }
 
   async function addPocket(pocket: PocketProps) {
@@ -125,7 +121,6 @@ export const AppProvider: React.FC = ({children}) => {
   }
 
   function updateSelectedPocket(pocket: PocketProps) {
-    console.log('recebi', pocket);
     setSelectedPocket(pocket);
   }
 

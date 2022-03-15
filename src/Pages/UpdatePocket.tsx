@@ -69,7 +69,6 @@ export const UpdatePocket: React.FC = () => {
           value={value}
           onChangeText={text => {
             setValue(text)
-            console.log('text', text, 'state', value);
           }}
           style={styles.input}
         />
