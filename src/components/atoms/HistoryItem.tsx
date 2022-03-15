@@ -56,9 +56,9 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({
 const HistoryIcon: React.FC<{ type: TransactionType }> = ({ type }) => {
   const backgroundColor = type === 'redeem' ? Colors.placeholder : Colors.successLight;
   const icons = {
-    save: <Feather name="trending-up" size={36} color={Colors.success} />,
-    redeem: <Feather name="trending-down" size={36} color={Colors.text} />,
-    creation: <Feather name="plus-circle" size={36} color={Colors.success} />,
+    save: <Feather name="trending-up" size={24} color={Colors.success} />,
+    redeem: <Feather name="trending-down" size={24} color={Colors.text} />,
+    creation: <Feather name="plus-circle" size={24} color={Colors.success} />,
   }
 
   return (
@@ -77,9 +77,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   icon: {
-    width: 60,
-    height: 60,
-    borderRadius: 60,
+    width: 48,
+    height: 48,
+    borderRadius: 48,
     marginRight: 16,
     alignItems: 'center',
     justifyContent: 'center',
