@@ -34,7 +34,6 @@ export class PocketService {
 
   async addNewPocket(pocket: PocketProps) {
     const storagedPockets = await this.getPockets();
-
   
     if (storagedPockets.error) {
       return {success: false, error: 'Houve um erro ao adicionar sua carteira'};
@@ -52,7 +51,7 @@ export class PocketService {
         type: 'creation',
       };
 
-      const addedToHistory = await this.historyService.addPocketHistory(historyItemToAdd);
+      const addedToHistory = await this.historyService.addToHistory(historyItemToAdd);
 
       console.log({success: true, data: newPockets, addedToHistory});
       return {success: true, data: newPockets, addedToHistory};

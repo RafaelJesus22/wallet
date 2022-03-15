@@ -13,7 +13,7 @@ export class HistoryService {
     return data;
   }
 
-  async setHistory(history: HistoryItemProps[]) {
+  private async setHistory(history: HistoryItemProps[]) {
     const { success, error } = await setItem(StorageKey.HISTORY, history);
 
     if (!success) {
@@ -37,7 +37,7 @@ export class HistoryService {
     return pocketHistory;
   }
 
-  async addPocketHistory(historyItem: HistoryItemProps) {
+  async addToHistory(historyItem: HistoryItemProps) {
     const history = await this.getHistory();
     const newHistory = [historyItem, ...history];
 
