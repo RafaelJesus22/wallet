@@ -28,8 +28,6 @@ export const UpdatePocket: React.FC = () => {
   async function handleSubmit () {
     setLoading(true);
 
-    console.log('value', value);
-
     const formattedValue = removeDots(value).replace(',', '.').replace('R$', '');
     let newValue = selectedPocket?.value || 0;
 
@@ -44,12 +42,11 @@ export const UpdatePocket: React.FC = () => {
       value: newValue,
     } as PocketProps
 
-    await updatePocket(updatedPocket);
+    await updatePocket(updatedPocket, actionType);
     updateSelectedPocket(updatedPocket);
     Alert.alert('Sucesso', 'Carteira atualizada com sucesso!');
 
     navigation.goBack();
-
     setLoading(false);
   }
 

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Entypo, Feather, AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -55,7 +55,7 @@ export const PocketDetails = () => {
   ];
 
   return (
-    <View>
+    <ScrollView>
       <View style={styles.header}>
         <Entypo name="chevron-left" color={Colors.text} size={32} onPress={handlePressBack} />
         <View style={styles.headerContent}>
@@ -66,7 +66,7 @@ export const PocketDetails = () => {
         <Actions actions={ACTIONS} />
       </View>
       <PocketHistory />
-    </View>
+    </ScrollView>
   );
 };
 

@@ -7,13 +7,11 @@ import { HistoryItem } from '../atoms/HistoryItem';
 
 export const PocketHistory = () => {
   const [loading, setLoading] = useState(false);
-  const [history, setHistory] = useState<HistoryItemProps[]>([]);
-  const { getPocketHistory } = useAppContext();
+  const { getPocketHistory, pocketHistory } = useAppContext();
 
   async function getHistory() {
     setLoading(true);
-    const history = await getPocketHistory();
-    setHistory(history);
+    await getPocketHistory();
     setLoading(false);
   }
 
@@ -32,7 +30,7 @@ export const PocketHistory = () => {
           />
         )}
 
-        {history && history.map(h => (
+        {pocketHistory && pocketHistory.map(h => (
           <HistoryItem {...h} key={h.id} />
         ))}
       </View>

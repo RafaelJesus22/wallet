@@ -5,34 +5,34 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import uuid from 'react-native-uuid';
 import { PocketService } from '../services/pockets';
 import { HistoryService } from '../services/History';
 import { UserService } from '../services/user';
-import {HistoryItemProps, PocketProps} from '../types';
+import {HistoryItemProps, PocketProps, TransactionType} from '../types';
 
 interface AppContextData {
   total: number;
   pockets: PocketProps[];
   selectedPocket?: PocketProps;
   isShowingUserInfo: boolean;
-  loading: boolean;
-  updateLoading: () => void;
   updateIsShowingUserInfo(): Promise<void>;
-  updatePocket(pocket: PocketProps): Promise<void>;
+  updatePocket(pocket: PocketProps, type: TransactionType): Promise<void>;
   updateSelectedPocket(pocket: PocketProps): void;
   addPocket(pocket: PocketProps): Promise<void>;
   deletePocket(pocket: PocketProps): Promise<void>;
-  getPocketHistory(): Promise<HistoryItemProps[]>;
+  getPocketHistory(): Promise<void>;
+  pocketHistory: HistoryItemProps[];
 }
 
 const AppContext = createContext<AppContextData>({} as AppContextData);
 
 export const AppProvider: React.FC = ({children}) => {
   const [total, setTotal] = useState(0);
-  const [loading, setloading] = useState(false);
   const [pockets, setPockets] = useState<PocketProps[]>([]);
   const [selectedPocket, setSelectedPocket] = useState<PocketProps>({} as PocketProps);
   const [isShowingUserInfo, setIsShowingUserInfo] = useState(false);
+  const [pocketHistory, setPocketHistory] = useState<HistoryItemProps[]>([]);
   const userService = new UserService();
   const pocketService = new PocketService();
   const historyService = new HistoryService();
@@ -68,23 +68,33 @@ export const AppProvider: React.FC = ({children}) => {
     }
   }
 
-  const updateLoading = () => {
-    setloading(!loading);
-  };
 
   const handleUpdateTotal = async () => {
     setTotal(pockets.reduce((acc, curr) => acc + curr.value, 0));
   };
 
-  async function updatePocket(pocket: PocketProps) {
+  async function updatePocket(pocket: PocketProps, type: TransactionType) {
     const updatedPocket = await pocketService.updatePocket(pocket);
+    const value = type === 'save'
+      ? pocket.value - selectedPocket.value
+      : selectedPocket.value - pocket.value;
 
     if (updatedPocket.success) {
       await getStoragedPockets();
 
       const updatedPocket = pockets.find(p => p.id === pocket.id);
-
+      
       if (updatedPocket) {
+        const historyItem: HistoryItemProps = {
+          id: uuid.v4().toString(),
+          pocketId: pocket.id,
+          date: new Date(),
+          value,
+          type,
+        };
+
+        await historyService.addToHistory(historyItem);
+        await getPocketHistory();
         return setSelectedPocket(updatedPocket);
       }
     }
@@ -122,7 +132,7 @@ export const AppProvider: React.FC = ({children}) => {
   async function getPocketHistory() {
     const pocketHistory = await historyService.getPockethistory(selectedPocket.id);
 
-    return pocketHistory;
+    setPocketHistory(pocketHistory);
   }
 
   useEffect(() => {
@@ -136,14 +146,13 @@ export const AppProvider: React.FC = ({children}) => {
         pockets,
         selectedPocket,
         isShowingUserInfo,
-        loading,
-        updateLoading,
         updateIsShowingUserInfo,
         addPocket,
         updatePocket,
         deletePocket,
         updateSelectedPocket,
         getPocketHistory,
+        pocketHistory,
       }}>
       {children}
     </AppContext.Provider>
@@ -162,6 +171,7 @@ export const useAppContext = () => {
     deletePocket,
     updateSelectedPocket,
     getPocketHistory,
+    pocketHistory,
   } = useContext(AppContext);
 
   return {
@@ -175,5 +185,6 @@ export const useAppContext = () => {
     deletePocket,
     updateSelectedPocket,
     getPocketHistory,
+    pocketHistory,
   };
 };
