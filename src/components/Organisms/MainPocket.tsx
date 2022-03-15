@@ -19,7 +19,7 @@ export const MainPocket: React.FC = () => {
     {
       name: 'Adicionar\nbolso',
       img: <Feather name="plus-circle" size={36} color={Colors.text} />,
-      onPress: () => navigation.navigate(Screens.NEW_POCKET),
+      onPress: () => navigation.navigate(Screens.NEW_POCKET_NAME),
     }
   ];
 
